@@ -92,9 +92,10 @@ public class RetrieveCompounds {
 		
 //		File f = new File("/home/swolf/MOPAC/Hill-Riken-MM48_POSITIVE_PubChem_Formula/");
 //		File f = new File("/home/swolf/MOPAC/Hill-Riken-MM48_POSITIVE_PubChem_LocalMass2009_CHONPS_NEW/spectra/");
-//		File files[] = f.listFiles();
+		File f = new File("/home/ftarutti/MetFrag/alanine/");
+		File files[] = f.listFiles();
 		
-		File[] files = new File[]{new File(args[0])};
+//		File[] files = new File[]{new File(args[0])};
 		
 		Config config = null;
 		try {
@@ -107,17 +108,31 @@ public class RetrieveCompounds {
 		File[] pubchemFiles = new File("/vol/mirrors/pubchem").listFiles();
 		Arrays.sort(pubchemFiles);
 		
+		for (int i = 0; i < pubchemFiles.length; i++) {
+			System.out.println(pubchemFiles[i]);
+		}
+		
+		
+		
 		for(int i=0;i<files.length;i++)
 		{
+			
+			
+			
 			if(files[i].isFile() && files[i].getName().split("\\.")[1].equals("txt"))
 			{
+				
 				WrapperSpectrum spectrum = new WrapperSpectrum(files[i].toString());
 				List<String> candidates = null;
 				
 				String filePath = files[i].getParent();
 				String fileName = files[i].getName().split("\\.")[0];
+				
+				
 				if(new File(filePath + "/" + database + "/" + fileName).isDirectory())
 					continue;
+				
+				
 				
 				if(isOnline)
 				{
