@@ -40,30 +40,49 @@ public class PreprocessMolecules {
 	// LARGE BUG: /home/swolf/MOPAC/ProofOfConcept/pubchem/CID_3002977_spectrum/3002977.sdf /home/swolf/MOPAC/ProofOfConcept/pubchem/CID_3002977_spectrum/mopac/ 600 600 /home/swolf/MOPAC/ProofOfConcept/pubchem/CID_3002977_spectrum/mopac/mopacDebug.txt
 	public static void main(String[] args) {
 		
-		File file = null;
-		String outputFolder = "";
+		String homeFolder = "/home/ftarutti/MetFrag/alanine/pubchem/AlaninTest/";
+		
+		File f = new File(homeFolder);
+		File files[] = f.listFiles();
+		
+		
+		
+		//File file = null;
+		
 		int mopacRuntime = 4800;
 		int ffSteps = 4800;		
-		String outputMOPACDebug = "";
+		//String outputMOPACDebug = "/home/ftarutti/MetFrag/alanine/mopac/debug.info";
 		
-		if(args.length < 3)
-		{
-			System.err.println("Not all parameters given!");
-			System.exit(1);
-		}
-		else
-		{
-			file = new File(args[0]);
-			outputFolder = args[1];
-			mopacRuntime = Integer.parseInt(args[2]);
-			if(args.length > 3)
-				ffSteps = Integer.parseInt(args[3]);
-			if(args.length > 4)
-				outputMOPACDebug = args[4];
-		}
+//		if(args.length < 3)
+//		{
+//			System.err.println("Not all parameters given!");
+//			System.exit(1);
+//		}
+//		else
+//		{
+//			//file = new File(args[0]);
+//			outputFolder = args[1];
+//			mopacRuntime = Integer.parseInt(args[2]);
+//			if(args.length > 3)
+//				ffSteps = Integer.parseInt(args[3]);
+//			if(args.length > 4)
+//				outputMOPACDebug = args[4];
+//		}
 		
-		if(file.isFile())
+		int counter = 0;
+		
+		for (File file : files) {
+			
+		
+		
+		if(file.isFile()  && file.toString().endsWith("sdf"))
 		{
+			String outputFolder = "/home/ftarutti/MetFrag/alanine/mopac/";
+			
+			String outputMOPACDebug = "/home/ftarutti/MetFrag/alanine/mopac/debug"+counter+".info";
+			
+			System.out.println("################################  "+counter);
+			counter++;
 			try {
 				MDLV2000Reader reader = new MDLV2000Reader(new FileReader(file));
 //				MDLReader reader = new MDLReader(new FileReader(new File("/vol/mirrors/kegg/mol/C00509.mol")));
@@ -209,5 +228,5 @@ public class PreprocessMolecules {
 			}
 			
 		}
-	}
+	}}
 }
