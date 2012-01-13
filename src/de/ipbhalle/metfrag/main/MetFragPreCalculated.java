@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -87,6 +88,8 @@ public class MetFragPreCalculated {
 		String database = config.getDatabase();
 		List<CMLMolecule> candidates = new ArrayList<CMLMolecule>();
 		
+//		System.out.println("Database: "+config.getDatabase()+"\t"+config.getFolder()+"\t"+config.getFile());
+		
 		if(getLowestHeatofFormation)
 		{
 			
@@ -130,7 +133,12 @@ public class MetFragPreCalculated {
 		else		
 			candidates = CMLTools.readFolder(folderToMopac);			
 		
-		
+		for (CMLMolecule cmlmol : candidates) {
+			System.out.println(cmlmol.getFileName());
+//			System.out.println(cmlmol.getFileName().split("\\.")[0]);
+//			cmlmol.setFileName(cmlmol.getFileName().split("\\.")[0]);
+//			System.out.println(cmlmol.getFileName());
+		}
 		
 //		this.candidateCount = candidates.size();
 		results.addToCompleteLog("\n*****************************************************\n\n");
@@ -170,8 +178,10 @@ public class MetFragPreCalculated {
 			
 			count++;
 		}
-		
 
+		
+		System.out.println("correct candidate: "+getCorrectCandidateID(spectrum, database));
+		
 		evaluateResults(getCorrectCandidateID(spectrum, database), spectrum, true, config.getFolder(), writeSDF);		
 	}
 	
@@ -185,7 +195,10 @@ public class MetFragPreCalculated {
 			candidate = spectrum.getKEGG();
 		else if(database.equals("chebi"))
 			candidate = spectrum.getChebi();
-		return candidate;
+//		return candidate;
+		return candidate+".sdf_O2.cml"; //TODO: find a better solution
+		
+//		correctCandidateID= "5950.sdf_O2.cml";
 	}
 	
 	
@@ -244,6 +257,7 @@ public class MetFragPreCalculated {
 		//TODO: hack for local file
 //		correctCandidateID = correctCandidateID + "_Combined.cml";
 		
+	//	correctCandidateID= "5950.sdf_O2.cml";
 		
 		//now collect the result
 		Map<String, IAtomContainer> candidateToStructure = results.getMapCandidateToStructure();
@@ -251,6 +265,16 @@ public class MetFragPreCalculated {
 		//CHANGED TO NEW SCORING!!!
 //		Map<Double, Vector<String>> realScoreMap = results.getRealScoreMap();
 		Map<Double, Vector<String>> realScoreMap = Scoring.scoreCandidates(results.getMapCandidateToFragments());
+		
+		Set<Double> keys = realScoreMap.keySet();
+		
+		System.out.println("Scores: ");
+		for (Double double1 : keys) {
+			
+			System.out.println(double1+"\t"+realScoreMap.get(double1).toString());
+			
+		}
+		
 		StringBuilder completeLog = results.getCompleteLog();
 		
 		//this is the real candidate count after filtering not connected compounds
@@ -280,7 +304,7 @@ public class MetFragPreCalculated {
 		keysScore = realScoreMap.keySet().toArray(keysScore);
 		Arrays.sort(keysScore);
 		
-		//write out SDF with all the structures
+//		//write out SDF with all the structures
 		if(writeSDF)
 		{
 			writeSDF(keysScore, folder, correctCandidateID);
@@ -363,12 +387,14 @@ public class MetFragPreCalculated {
 		}
 		else
 		{
+			
 			for (int i = keysScore.length-1; i >= 0; i--) {
 				boolean check = false;
 				int temp = 0;
 				for (int j = 0; j < realScoreMap.get(keysScore[i]).size(); j++) {
 					scoreListReal.append("\n" + keysScore[i] + " - " + realScoreMap.get(keysScore[i]).get(j) + "\t[" + candidateToEnergy.get(realScoreMap.get(keysScore[i]).get(j)) + "]" + "\t");
-					if(correctCandidateID.equals(realScoreMap.get(keysScore[i]).get(j).split("_")[0]))
+					
+					if(correctCandidateID.equals(realScoreMap.get(keysScore[i]).get(j).split("_")[0]) || correctCandidateID.equals(realScoreMap.get(keysScore[i]).get(j)))
 					{
 						check = true;
 					}
@@ -381,13 +407,16 @@ public class MetFragPreCalculated {
 				{
 					rankBestCase += temp;
 				}
-				//add it to rank best case
-				else
+				else //add it to rank best case
 				{
 					resultsTable = "\n" + file + "\t" + correctCandidateID + "\t" + this.candidateCount + "\t" + rankWorstCase + "\t" + rankTanimotoGroup + "\t" + rankIsomorphism + "\t" + spectrum.getExactMass() + "\t" + timeEnd;
 				}
 			}
+			
+			
 		}
+		
+		System.out.println("SCORELIST: "+scoreListReal.toString());
 		
 		//the correct candidate was not in the pubchem results
 		if(resultsTable.equals(""))
@@ -557,39 +586,42 @@ public class MetFragPreCalculated {
 		//NaringeninTest
 //		"/home/swolf/MOPAC/BondOrderTests/Naringenin/spectrum/PB000122PB000123PB000124PB000125.txt" "2011-04-20_13-33-33" "/home/swolf/MOPAC/BondOrderTests/Naringenin/"
 //		-Dproperty.file.path=/home/swolf/MOPAC/BondOrderTests/Naringenin/config/ -Xms1500m -Xmx5500m
-		try
+//		try
 		{
 			//thats the current file 
-			if(args[0] != null)
+//			if(args[0] != null)
+//			{
+//				currentFile = args[0];
+//			}
+//			else
 			{
-				currentFile = args[0];
-			}
-			else
-			{
-				System.err.println("Error! Parameter missing!");
-				System.exit(1);
-			}
-			
-			//thats the date for the log file
-			if(args[1] != null)
-			{
-				date = args[1]; 
-			}
-			else
-			{
-				System.err.println("Error! Parameter missing!");
-				System.exit(1);
+				currentFile = "/home/ftarutti/MetFrag/alanine/AlaninTest.txt";
+//				System.err.println("Error! Parameter missing!");
+//				System.exit(1);
 			}
 			
 			//thats the date for the log file
-			if(args[2] != null)
+//			if(args[1] != null)
+//			{
+//				date = args[1]; 
+//			}
+//			else
 			{
-				CMLFiles = args[2]; 
+//				System.err.println("Error! Parameter missing!");
+//				System.exit(1);
+				date="2012-01-10";
 			}
-			else
+			
+			//thats the date for the log file
+//			if(args[2] != null)
+//			{
+//				CMLFiles = args[2]; 
+//			}
+//			else
 			{
-				System.err.println("Error! Parameter missing!");
-				System.exit(1);
+//				System.err.println("Error! Parameter missing!");
+//				System.exit(1);
+				CMLFiles = "/home/ftarutti/MetFrag/alanine/mopac/";
 			}
 			
 			
@@ -598,11 +630,11 @@ public class MetFragPreCalculated {
 				writeSDF = true;
 			}
 		}
-		catch(Exception e)
-		{
-			System.err.println("Error! Parameter missing!");
-			System.exit(1);
-		}
+//		catch(Exception e)
+//		{
+//			System.err.println("Error! Parameter missing!");
+//			System.exit(1);
+//		}
 			
 		
 		MetFragPreCalculated metFrag = new MetFragPreCalculated(currentFile, date);
