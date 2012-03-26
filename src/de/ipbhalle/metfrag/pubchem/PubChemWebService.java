@@ -295,7 +295,7 @@ public class PubChemWebService {
 	        SmilesGenerator generatorSmiles = new SmilesGenerator();
 			for (int i = 0; i < cids.length; i++) {
 				candidatesString.add(cids[i] + "");
-				System.out.println(cids[i]);
+//				System.out.println(cids[i]);
 				this.retrievedHits.put(cids[i], generatorSmiles.createSMILES(fileContents.getChemSequence(0).getChemModel(i).getMoleculeSet().getMolecule(0)));
 			}
 	        
@@ -423,7 +423,7 @@ public class PubChemWebService {
 				this.containers.add(fileContents.getChemSequence(0).getChemModel(i).getMoleculeSet().getAtomContainer(0));
 				Map<Object, Object> properties = fileContents.getChemSequence(0).getChemModel(i).getMoleculeSet().getAtomContainer(0).getProperties();
 		        pubchemCIDs.add((String) properties.get("PUBCHEM_COMPOUND_CID"));
-		        System.out.println((String) properties.get("PUBCHEM_COMPOUND_CID"));
+//		        System.out.println((String) properties.get("PUBCHEM_COMPOUND_CID"));
 		        this.retrievedHits.put(Integer.parseInt(properties.get("PUBCHEM_COMPOUND_CID").toString()), generatorSmiles.createSMILES(fileContents.getChemSequence(0).getChemModel(i).getMoleculeSet().getMolecule(0)));
 			}
 
@@ -555,7 +555,7 @@ public class PubChemWebService {
 				this.containers.add(fileContents.getChemSequence(0).getChemModel(i).getMoleculeSet().getAtomContainer(0));
 				Map<Object, Object> properties = fileContents.getChemSequence(0).getChemModel(i).getMoleculeSet().getAtomContainer(0).getProperties();
 		        pubchemCIDs.add((String) properties.get("PUBCHEM_COMPOUND_CID"));
-		        System.out.println((String) properties.get("PUBCHEM_COMPOUND_CID"));
+//		        System.out.println((String) properties.get("PUBCHEM_COMPOUND_CID"));
 		        this.retrievedHits.put(Integer.parseInt(properties.get("PUBCHEM_COMPOUND_CID").toString()), generatorSmiles.createSMILES(fileContents.getChemSequence(0).getChemModel(i).getMoleculeSet().getMolecule(0)));
 			}
 

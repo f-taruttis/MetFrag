@@ -268,17 +268,24 @@ public class CMLTools {
 		
 		//test: /home/swolf/MOPAC/Hill-Riken-MM48_POSITIVE_PubChem_LocalMass2009_CHONPS_NEW/mopac_4800/C40H39N3O3
 		
+		System.out.println("CMLTools: "+folder.toString()+"\t"+sumFormula+"\t"+ID);
+		
 		CMLReader reader;
 		List<CMLMolecule> containersList = null;
 		List<CMLMolecule> ret = new ArrayList<CMLMolecule>();
 
 		File folderTemp = new File(folder.getAbsolutePath() + "/" + sumFormula);
+		
+	
+		
 		File files[] = folderTemp.listFiles();
 		if(files == null)
 		{
 			System.err.println("Error: " + folder.getAbsolutePath() + "/" + sumFormula + " does not exist...missing candidate(s)!");
 			return null;
 		}
+		
+//		System.out.println("CMLTools "+files.length);
 		
 		Arrays.sort(files);
 		String currentMoleculeID = "";
@@ -290,8 +297,13 @@ public class CMLTools {
 			if(files[i].getName().contains("Combined"))
 				continue;
 			
+			
+			
 			if(!currentMoleculeID.equals("") && !currentMoleculeID.equals(files[i].getName().split("_")[0]))
 			{
+				
+				
+				
 		    	if(i == (files.length - 1))
 		    		containersList.add(new CMLMolecule(files[i], files[i].getName()));
 		    	
@@ -312,6 +324,7 @@ public class CMLTools {
 		    	containersList.add(new CMLMolecule(files[i], files[i].getName()));
 				currentMoleculeID = files[i].getName().split("_")[0];
 				
+				
 				return ret;
 			}
 			
@@ -325,6 +338,7 @@ public class CMLTools {
 		    
 		    if(currentMoleculeID.equals(""))
 		    {
+		    	System.out.println("ID "+currentMoleculeID);
 		    	containersList = new ArrayList<CMLMolecule>();
 		    	containersList.add(new CMLMolecule(files[i], files[i].getName()));
 		    	currentMoleculeID = files[i].getName().split("_")[0];

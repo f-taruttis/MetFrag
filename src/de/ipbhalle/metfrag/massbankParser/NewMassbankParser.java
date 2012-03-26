@@ -21,6 +21,7 @@
 package de.ipbhalle.metfrag.massbankParser;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -301,7 +302,7 @@ public class NewMassbankParser {
 					String splitString[] = new String[line.split("\\s+").length];
 					splitString=line.split("\\s+");
 
-					
+//					System.out.println(splitString[1]+"\t"+splitString[2]+"\t"+splitString[3]);
 					peaks.add(new Peak(Double.valueOf(splitString[1]), Double.valueOf(splitString[2]), Double.valueOf(splitString[3]), collisionEnergy));
 					line = in.readLine();
 			
@@ -520,17 +521,19 @@ public class NewMassbankParser {
 			}
 		}
 
-		
 		if(precursorMZ==0.0) //TODO: 
 		{
-			
 			Map<String ,Double> preType = readPrecursorTypes();
 		
+			
+			if(preType.size()>0)
+			{
+				
 			if(preType.containsKey(precursorType))
 			{
 				precursorMZ=preType.get(precursorType)+mass;
 			}
-			
+			}
 		}
 		
 		//TODO: add sid to spectra, or better create a Map <CompoundDatabases, (ID)String>
@@ -583,20 +586,19 @@ public class NewMassbankParser {
 	 */
 	public static Map<String,Double> readPrecursorTypes()
 	{
+		
 		Map<String, Double> preType = new HashMap<String, Double>();
 
 		String file = "";
+		
 		
 		if(System.getProperty("property.file.path") != null)
     	{
     		file = System.getProperty("property.file.path");
     		file += "precursorType.csv";
-    	}
-		else
-    	{
-    		URL url = AssignFragmentPeak.class.getClassLoader().getResource("precursorType.csv");
-			file = url.getFile();
-    	}
+//    		System.out.println("YUPP");
+    	
+
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(file));
 			
@@ -630,8 +632,8 @@ public class NewMassbankParser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+//		}
+    	}
 		return preType;
 	}
 
@@ -645,24 +647,37 @@ public class NewMassbankParser {
 	 */
 	public static void main(String[] args) {
 		
-		//Vector<Spectrum> spectra = Read("/home/ftarutti/records/CO000001.txt");
-		//Vector<Spectrum> spectra = Read("/home/ftarutti/records/PB000122.txt");
-		//Vector<Spectrum> spectra = Read("/home/ftarutti/records/PR100124.txt");
-		//Vector<Spectrum> spectra = Read("/vol/massbank/data/records/PR100975.txt");
-		//Vector<Spectrum> spectra = Read("/home/ftarutti/records/PR100040.txt");
-		//Vector<Spectrum> spectra = Read("/home/ftarutti/records/PB006007.txt");
-		
-	
 
-		
-		Vector<Spectrum> spectra = Read("/home/ftarutti/testspectra/toMerge/XX006704.txt");
+		Vector<Spectrum> spectra = Read("/vol/massbank/data/records/PB001420.txt" +
+				"");
+
 		for (Spectrum spectrum : spectra) {
 			
-			spectrum.show();
+//			spectrum.show();
 			Vector<Peak> peaks = spectrum.getPeaks();
 			
-			System.out.println(spectrum.dblinks.toString());
 			
+//			get product:
+			double prec = spectrum.getPrecursorMZ();
+			
+			if(prec >0.0)
+			{
+			double max = prec -18;
+			double maxInt = 0;
+			Peak productPeak = null;
+			
+			for (Peak peak : peaks) {
+				if (peak.getIntensity()> maxInt && peak.getMass()<= max )
+				{
+					productPeak = peak;
+					maxInt = peak.getIntensity();
+				}
+				
+			}
+			
+			System.out.println("PRODUCT:");
+			System.out.println(productPeak.getMass()+"\t"+productPeak.getIntensity()+"\t"+productPeak.getRelIntensity());
+			}
 			
 			}
 		

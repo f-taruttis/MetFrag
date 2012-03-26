@@ -235,6 +235,15 @@ public class Scoring {
         double maxHP = 0.0;
         
 		for (String candidateID : mapToCandidateFragments.keySet()) {
+			
+//			if(candidateID.contains(".sdf"))
+//			{
+//				String newID = candidateID.split(".sdf")[0];
+//				System.out.println("candidate: "+candidateID);
+//				System.out.println("new "+newID);
+//				candidateID=newID;
+//			}
+			
 			double tempBondLength = 0.0;
 			double tempBondOrder = 0.0;
 			double tempPeakMass = 0.0;

@@ -88,6 +88,9 @@ public class MetFragPreCalculated {
 		String database = config.getDatabase();
 		List<CMLMolecule> candidates = new ArrayList<CMLMolecule>();
 		
+		System.out.println(config.getMzabs());
+		System.out.println(config.getMzppm());
+		
 //		System.out.println("Database: "+config.getDatabase()+"\t"+config.getFolder()+"\t"+config.getFile());
 		
 		if(getLowestHeatofFormation)
@@ -135,9 +138,9 @@ public class MetFragPreCalculated {
 		
 		for (CMLMolecule cmlmol : candidates) {
 			System.out.println(cmlmol.getFileName());
-//			System.out.println(cmlmol.getFileName().split("\\.")[0]);
-//			cmlmol.setFileName(cmlmol.getFileName().split("\\.")[0]);
-//			System.out.println(cmlmol.getFileName());
+			System.out.println(cmlmol.getFileName().split("\\.")[0]);
+			cmlmol.setFileName(cmlmol.getFileName().split("\\.")[0]);
+			System.out.println(cmlmol.getFileName());
 		}
 		
 //		this.candidateCount = candidates.size();
@@ -195,8 +198,8 @@ public class MetFragPreCalculated {
 			candidate = spectrum.getKEGG();
 		else if(database.equals("chebi"))
 			candidate = spectrum.getChebi();
-//		return candidate;
-		return candidate+".sdf_O2.cml"; //TODO: find a better solution
+		return candidate;
+//		return candidate+".sdf_O2.cml"; //TODO: find a better solution
 		
 //		correctCandidateID= "5950.sdf_O2.cml";
 	}

@@ -37,17 +37,28 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.formula.MassToFormulaTool;
 
+import com.sun.media.jai.opimage.ThresholdCRIF;
+
 import de.ipbhalle.metfrag.databaseMetChem.Query;
 import de.ipbhalle.metfrag.main.Config;
 import de.ipbhalle.metfrag.massbankParser.*;
 import de.ipbhalle.metfrag.molDatabase.PubChemLocal;
 import de.ipbhalle.metfrag.read.SDFFile;
+import de.ipbhalle.metfrag.util.Maths;
 
 
 
 
 /**
  * Wrapper for Massbank parser.
+ */
+/**
+ * @author ftarutti
+ *
+ */
+/**
+ * @author ftarutti
+ *
  */
 public class WrapperSpectrum {
 	
@@ -106,6 +117,71 @@ public class WrapperSpectrum {
 		this.dblinks=spectra.get(0).dblinks;
 	}
 	
+	
+	/**
+	 * Reads in a MassBank flat file from a given location.
+	 * 
+	 * @param filename the filename
+	 * @param thresholdForPeaks the threshold for peaks which are taken into consideration. E.g. if the threshold = 0.05, peaks with an intensity lower than 0,05 * maximum(intensities) are ignored.
+	 * 
+	 */
+	public WrapperSpectrum(String fileName, double thresholdForPeaks  )
+	{
+		
+		
+		this.spectra = NewMassbankParser.Read(fileName);
+		
+		this.peaks = spectra.get(0).getPeaks();
+		
+		Double intensities[] = new Double[peaks.size()];
+		
+		int iter=0;
+		
+		for(Peak peak:this.peaks)
+		{
+			intensities[iter] = peak.getRelIntensity();
+			System.out.println(intensities[iter]);
+			iter++;
+		}
+		
+		Double max = Maths.max(intensities);
+		double threshold = thresholdForPeaks * max;
+		
+		
+		for (Iterator<Peak> peakIt = this.peaks.iterator(); peakIt.hasNext();)
+		{
+			Peak peak = peakIt.next();
+			
+			double intensity = peak.getRelIntensity();
+			if(intensity < threshold)
+			{
+				peakIt.remove();
+			}
+			
+			
+		}
+		//this.peaks = spectra.get(0).getPeaks(); //just one spectra for now
+		this.exactMass = spectra.get(0).getExactMass();
+		this.mode = spectra.get(0).getMode();
+		this.collisionEnergy = spectra.get(0).getCollisionEnergy();
+		this.InchI = spectra.get(0).getInchi();
+		this.CID = spectra.get(0).getCID();
+		this.KEGG = spectra.get(0).getKEGG();
+		this.metlin=spectra.get(0).getMetlin();
+		this.knapsack =spectra.get(0).getKnapsack();
+		this.nameTrivial = spectra.get(0).getTrivialName();
+		this.chebi = spectra.get(0).getCHEBI();
+		this.setPrecursorType(spectra.get(0).getPrecursorType());
+		this.setPrecursorMZ(spectra.get(0).getPrecursorMZ());
+		String[] fileTemp = fileName.split("\\/");
+		this.filename = fileTemp[fileTemp.length - 1];
+		this.setFormula(spectra.get(0).getFormula());
+		this.isPositive = spectra.get(0).isPositive();
+		
+		this.smiles=spectra.get(0).getSmiles();
+		
+		this.dblinks=spectra.get(0).dblinks;
+	}
 	
 	/**
 	 * Creates a new Spectrum with a given peaklist...used for the web interface

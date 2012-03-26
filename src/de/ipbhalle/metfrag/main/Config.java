@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
+import de.ipbhalle.metfrag.tools.Constants;
+
 /**
  * The Class Config.
  */
@@ -117,6 +119,10 @@ public class Config {
 	{
 		Properties properties = new Properties();
 		String file = System.getProperty("property.file.path");
+//		file="/home/ftarutti/workspace/MetFrag/src/";
+		
+		System.out.println(file+ "Settings.properties");
+		
 		properties.load(new FileInputStream(new File(file + "Settings.properties")));
 
 		return properties;

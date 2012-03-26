@@ -20,7 +20,9 @@
 */
 package de.ipbhalle.metfrag.main;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -59,7 +61,8 @@ import de.ipbhalle.metfrag.molDatabase.PubChemLocal;
 import de.ipbhalle.metfrag.tools.MolecularFormulaTools;
 import de.ipbhalle.metfrag.tools.PPMTool;
 
-public class RunningTimeEvaluation {
+public class RunningTime2
+{
 	
 	private static int sumArray(int[] bins)
 	{
@@ -80,14 +83,18 @@ public class RunningTimeEvaluation {
 
 		double minMass = Double.parseDouble(args[0]);//100.0;
 		double maxMass = Double.parseDouble(args[1]);//1000.0;
-		int maxCount = 100;//500;
-		int maxCountGlobal = 1000;//500000;
-		int treeDepth = 3;
-		int treeDepth2 = 2;
+//		int maxCount = 100;//500;
+//		int maxCountGlobal = 1000;//500000;
+		int treeDepth = 4;
+//		int treeDepth2 = 2;
+		
+		String file = args[2];
 		
 		Vector<Peak> peakList = new Vector<Peak>();
 		Peak peak = new Peak(30.0, 999.0, 10);
 		peakList.add(peak);
+		
+		
 		
 		//bins from 1 to 100 ... each bin contains 1000 structures
 		//first bin mass range: >=100 - <=110
@@ -121,12 +128,20 @@ public class RunningTimeEvaluation {
 			int count = 0;
 			
 			BufferedWriter out = new BufferedWriter(fstream);
-			while(sumArray(bins) < maxCountGlobal)
+			
+			//load needed IDs from file:
+			BufferedReader in = new BufferedReader(new FileReader(home+file));
+			String line="";
+			
+			while((line = in.readLine())!=null)
+	//		while(sumArray(bins) < maxCountGlobal)
 			{
 				//random ID
-				long randomID = Math.round(Math.random()*2889221.0);
-				int randomCandidateID = Integer.parseInt(Long.toString(randomID));
-			    PreparedStatement pstmt = con.prepareStatement("SELECT compound_id, exact_mass, formula, smiles from compound " +
+				//long randomID = Math.round(Math.random()*2889221.0);
+				//int randomCandidateID = Integer.parseInt(Long.toString(randomID));
+			    int randomCandidateID = Integer.parseInt(line.trim());
+				
+				PreparedStatement pstmt = con.prepareStatement("SELECT compound_id, exact_mass, formula, smiles from compound " +
 			    		"where compound_id = ? LIMIT 1;");
 			    pstmt.setInt(1, randomCandidateID);
 			    ResultSet res = pstmt.executeQuery();
@@ -142,8 +157,8 @@ public class RunningTimeEvaluation {
 		        if(exactMass <= minMass || exactMass >= (maxMass-0.1))
 		        	continue;
 		        
-		        if(bins[bin] > maxCount)
-		        	continue;
+//		        if(bins[bin] > maxCount)
+//		        	continue;
 		        
 		        if(alreadyDone.containsKey(randomCandidateID))
 		        	continue;
@@ -195,54 +210,54 @@ public class RunningTimeEvaluation {
 				}
 		        long stop = System.currentTimeMillis(); // stop timing
 					
-		        
-		        long start3 = System.currentTimeMillis(); // start timing
-		        
-				Fragmenter fragmenter2 = new Fragmenter(peakList, 0, 10, 1, true, false, true, true);
-				List<IAtomContainer> results2 = new ArrayList<IAtomContainer>();
-				
-		        try {
-					results2 = fragmenter2.generateFragmentsInMemory(mol, false, treeDepth2, false);
-				} catch (CDKException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					continue;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					continue;
-				}
-		        long stop3 = System.currentTimeMillis(); // stop timing
+//		        
+//		        long start3 = System.currentTimeMillis(); // start timing
+//		        
+//				Fragmenter fragmenter2 = new Fragmenter(peakList, 0, 10, 1, true, false, true, true);
+//				List<IAtomContainer> results2 = new ArrayList<IAtomContainer>();
+//				
+//		        try {
+//					results2 = fragmenter2.generateFragmentsInMemory(mol, false, treeDepth2, false);
+//				} catch (CDKException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					continue;
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					continue;
+//				}
+//		        long stop3 = System.currentTimeMillis(); // stop timing
 		        
 		        
 		        //Here new Fragmenter :
 		        
-		        long startNew = System.currentTimeMillis();
-		        
-		        SubstructureGenerator subgen = new SubstructureGenerator(mol, peakList);
-		        
-		        Map<IAtomContainer,SubMolecule> resultsN = new HashMap<IAtomContainer, SubMolecule>();
-		        
-		        try {
-					resultsN = subgen.getMoleculeSet();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-		        long stopNew = System.currentTimeMillis();
+//		        long startNew = System.currentTimeMillis();
+//		        
+//		        SubstructureGenerator2 subgen = new SubstructureGenerator2(mol, peakList);
+//		        
+//		        Map<IAtomContainer,SubMolecule> resultsN = new HashMap<IAtomContainer, SubMolecule>();
+//		        
+//		        try {
+//					resultsN = subgen.getMoleculeSetEfficent();
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//
+//		        long stopNew = System.currentTimeMillis();
 		        
 		        //End new Fragmenter
 		        
-				out.write(randomID + "\t");
+				out.write(randomCandidateID + "\t");
 				out.write(formula + "\t");
 				out.write(exactMass + "\t");
 				out.write(results.size() + "\t");
-				out.write(results2.size() +"\t");
-				out.write(resultsN.size() + "\t");
+//				out.write(results2.size() +"\t");
+//				out.write(resultsN.size() + "\t");
 				out.write((stop - start) + "\t");
-				out.write((stop3-start3) +"\t");
-				out.write((stopNew-startNew)+"\t");
+//				out.write((stop3-start3) +"\t");
+//				out.write((stopNew-startNew)+"\t");
 				out.write(ringCount + "\t");
 				out.newLine();	
 				out.flush();

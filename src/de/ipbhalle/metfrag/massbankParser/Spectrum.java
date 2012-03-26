@@ -61,6 +61,8 @@ public class Spectrum  implements java.io.Serializable, Comparable<Spectrum> {
 	
 	public Spectrum(int collisionEnergy, double tic, Vector<Peak> peaks, double exactMass, int mode, String InchI, Map<DatabaseIDs,String> dblinks, String nameTrivial, String formula, double precursorMZ, String precursorType, boolean isPositive,String smiles)
 	{
+		this.collisionEnergy = collisionEnergy;
+		
 		this.tic = tic;
 		this.peaks = peaks;
 		this.exactMass = exactMass;
@@ -85,7 +87,8 @@ public class Spectrum  implements java.io.Serializable, Comparable<Spectrum> {
 		this.knapsack="";
 		if(dblinks.containsKey(DatabaseIDs.PUBCHEM_CID))
 		{
-			this.CID = Integer.parseInt(dblinks.get(DatabaseIDs.PUBCHEM_CID));
+			if(!(dblinks.get(DatabaseIDs.PUBCHEM_CID).equals("")))
+				this.CID = Integer.parseInt(dblinks.get(DatabaseIDs.PUBCHEM_CID));
 		}
 		if(dblinks.containsKey(DatabaseIDs.KEGG))
 		{

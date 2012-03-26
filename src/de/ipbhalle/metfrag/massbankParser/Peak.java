@@ -151,9 +151,9 @@ public class Peak implements Comparable<Peak>, java.io.Serializable {
 		 StringBuilder result = new StringBuilder();
 		 String NEW_LINE = System.getProperty("line.separator");
 		 
-		 result.append("Intensity: "+this.intensity+NEW_LINE);
-		 result.append("Relative Intesity: "+this.relIntensity+NEW_LINE);
-		 result.append("Mass: "+this.mass+NEW_LINE);
+		 result.append("Intensity: "+this.getIntensity()+NEW_LINE);
+		 result.append("Relative Intesity: "+this.getRelIntensity()+NEW_LINE);
+		 result.append("Mass: "+this.getMass()+NEW_LINE);
 		 result.append(NEW_LINE);
 		 
 		 return result.toString();

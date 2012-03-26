@@ -27,7 +27,7 @@ import de.ipbhalle.metfrag.spectrum.WrapperSpectrum;
 
 public class RetrieveCompounds {
 	
-	private static IAtomContainer getPubChemEntryFromSdfGZ(String pubChemCID, File[] pubchemFiles)
+	private static IAtomContainer getPubChemEntryFromSdfGZ(String pubChemCID, File[] pubchemFiles) throws IOException
 	{
 		IAtomContainer molToReturn = null;
 		String pathToFile = "";
@@ -50,7 +50,7 @@ public class RetrieveCompounds {
 		}
 		
 		File sdfFile = new File(pathToFile);
-		IteratingMDLReader reader;
+		IteratingMDLReader reader=null;
 		try {
 			reader = new IteratingMDLReader(new GZIPInputStream(new FileInputStream(sdfFile)), DefaultChemObjectBuilder.getInstance());
 			while (reader.hasNext()) {
@@ -73,6 +73,7 @@ public class RetrieveCompounds {
 			e.printStackTrace();
 		}
 		
+		reader.close();
 		return molToReturn;
 	}
 	
@@ -90,9 +91,10 @@ public class RetrieveCompounds {
 		boolean isOnline = false;
 		
 		
+		
 //		File f = new File("/home/swolf/MOPAC/Hill-Riken-MM48_POSITIVE_PubChem_Formula/");
 //		File f = new File("/home/swolf/MOPAC/Hill-Riken-MM48_POSITIVE_PubChem_LocalMass2009_CHONPS_NEW/spectra/");
-		File f = new File("/home/ftarutti/MetFrag/alanine/");
+		File f = new File("/home/ftarutti/testspectra/Progress/Merged/");
 		File files[] = f.listFiles();
 		
 //		File[] files = new File[]{new File(args[0])};

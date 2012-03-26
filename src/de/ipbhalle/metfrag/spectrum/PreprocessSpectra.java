@@ -74,13 +74,13 @@ public class PreprocessSpectra {
 		int temp = 0;
 		
 		String recordName ="";
-		String accession="";
+		
 		
 		String collisionEnergy="";
 		
 		Map<String, List<File>> pubchemToFiles = new HashMap<String, List<File>>();
 		
-		boolean nameNotSet=true;
+//		boolean nameNotSet=true;
 		
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
@@ -102,24 +102,27 @@ public class PreprocessSpectra {
 								fileList);
 					}
 
-					if (nameNotSet) {
+//					if (nameNotSet) {
 						
-						recordName = spectrum.getTrivialName() + ";"
-								+ spectrum.getFormula() + ";"
-								+ selectedPrecursorTypes + "; MERGED";
-						nameNotSet = false;
-					}
+						
+//						nameNotSet = false;
+//					}
 					
 					collisionEnergy+=spectrum.getCollisionEnergy()+";";
 				}
 
 			}
+			
+//            nameNotSet=true;
 
 		}
 
 		
 		for (String pubchemID : pubchemToFiles.keySet()) {
 			String mergedNames = "";
+			String accession="";
+			
+
 			
 			Vector<WrapperSpectrum> spectra = new Vector<WrapperSpectrum>();
 			
@@ -140,6 +143,10 @@ public class PreprocessSpectra {
 				accession+=file.getName().split("\\.")[0]+";";
 				
 				lastFile = file.toString();
+				
+				recordName = spectrum.getTrivialName() + ";"
+						+ spectrum.getFormula() + ";"
+						+ selectedPrecursorTypes + "; MERGED";
 			}
 
 			//now merge the peaks from the different collision energies
@@ -228,6 +235,7 @@ public class PreprocessSpectra {
 	            FileWriter out = new FileWriter(outFile);
 	            out.write(line);
 	            out.close();
+	            
 			}
 			catch(FileNotFoundException e)
 			{
@@ -560,7 +568,7 @@ public class PreprocessSpectra {
 	
 	public static void main(String[] args) {
 //		String folder = "/home/swolf/MassBankData/MetFragSunGrid/BrukerRawData/Processed/";
-		String folder = "/home/ftarutti/testspectra/tmp/";
+		String folder = "/home/ftarutti/testspectra/Progress/";
 //		String folder = "/home/swolf/test/";
 		PreprocessSpectra pps = new PreprocessSpectra();
 		pps.preprocessUnsorted(folder, 0.002, 10);
